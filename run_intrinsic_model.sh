@@ -9,5 +9,5 @@ len=${#objects[@]}
 
 for (( i=0; i<=2; i++ ))
 do
-    python3 '/data2/cheng/LEGAC/intrinsic_model_wasabi.py' --path='/data2/cheng/LEGAC' --FeH_m=${slope[$i]} --targ=${objects[$i]} --directory='intrinsic_model' --subpix=529 --core_radius=${core_Re[$i]} --outskirt_radius${outskirt_Re[$i]} --grid_size=1000 &
+    python3 'intrinsic_model.py' --path='/LEGAC' --FeH_m=${slope[$i]} --targ=${objects[$i]} --directory='intrinsic_model' --subpix=529 --core_radius=${core_Re[$i]} --outskirt_radius${outskirt_Re[$i]} --grid_size=1000 &
 done
