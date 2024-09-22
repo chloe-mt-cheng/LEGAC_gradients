@@ -5,5 +5,5 @@ len=${#objects[@]}
 
 for (( i=0; i<=2; i++ ))
 do
-    python3 '/Users/chloecheng/Documents/LEGAC_resolved/calculate_seeing.py' --path='/Users/chloecheng/Documents/LEGAC_resolved' --target=${objects[$i]} --directory='test' --pixscale=0.205 --output_name=${objects[$i]} --input_name=${objects[$i]} &
+    python3 'calculate_seeing.py' --path='path/to/directory' --target=${objects[$i]} --directory='test' --pixscale=0.205 --output_name=${objects[$i]} --input_name=${objects[$i]} &
 done
