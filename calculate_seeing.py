@@ -1,7 +1,7 @@
 """Usage: calculate_seeing.py [-h][--path=<arg>][--target=<arg>][--directory=<arg>][--pixscale=<arg>][--output_name=<arg>][--input_name=<arg>]
 
 Examples:
-	Path: e.g. input --path='/Users/chloecheng/Documents/LEGAC_resolved'
+	Path: e.g. input --path='/path/to/main/directory'
 	Target: e.g. input --target='M5_172669'
 	Directory: e.g. input --directory='temp'
 	Pixel scale: e.g. input --pixscale=0.205
@@ -37,7 +37,7 @@ import itertools
 
 # Read in LEGA-C catalogue for image parameters
 my_cat = pd.read_csv('moffat_cat_final.csv', header=0, index_col=0) 
-LEGAC_cat_file = fits.open('/Users/chloecheng/Documents/LEGAC_resolved/legac_dr3_cat.fits')
+LEGAC_cat_file = fits.open('legac_dr3_cat.fits')
 LEGAC_cat_head = LEGAC_cat_file[1].header
 LEGAC_cat = LEGAC_cat_file[1].data
 LEGAC_cat_file.close()
@@ -83,11 +83,11 @@ def spectral_profile(target):
     
     #Import spectrum and weight map
     mask, obj = target.split('_')[0], target.split('_')[1]
-    spec2d_file = fits.open('/Users/chloecheng/Documents/LEGAC_resolved/2Dspectra/legac_' + mask + '_v3.11_spec2d_' + obj + '.fits')
+    spec2d_file = fits.open('/2Dspectra/legac_' + mask + '_v3.11_spec2d_' + obj + '.fits')
     flux2D = spec2d_file[0].data
     spec2d_file.close()
     
-    wht2d_file = fits.open('/Users/chloecheng/Documents/LEGAC_resolved/2Dspectra/legac_' + mask + '_v3.11_wht2d_' + obj + '.fits')
+    wht2d_file = fits.open('/2Dspectra/legac_' + mask + '_v3.11_wht2d_' + obj + '.fits')
     wht2D = wht2d_file[0].data
     wht2d_file.close()
     
@@ -220,7 +220,7 @@ def galfit_input(targ, directory, img_box, img_ctr, pixscale, output_name, input
 
     input_dict = dict(zip(keys, vals))
     input_df = pd.Series(input_dict, index=input_dict.keys())
-    input_df.to_csv('/Users/chloecheng/packages/galfit/%s/%s.input' %(directory, input_name), sep='\t', header=None)
+    input_df.to_csv('/galfit/%s/%s.input' %(directory, input_name), sep='\t', header=None)
     
 def galfit_model(directory, input_name):
     """Run galfit from OS and put the output files in a directory.
@@ -237,8 +237,8 @@ def galfit_model(directory, input_name):
     None
     """
     
-    os.system('/Users/chloecheng/packages/galfit/galfit /Users/chloecheng/packages/galfit/%s/%s.input >/dev/null 2>&1' %(directory, input_name))
-    os.system('mv /Users/chloecheng/Documents/LEGAC_resolved/*_galfit.fits /Users/chloecheng/Documents/LEGAC_resolved/galfit_imgs/%s/' %directory)
+    os.system('/galfit/galfit /galfit/%s/%s.input >/dev/null 2>&1' %(directory, input_name))
+    os.system('mv *_galfit.fits /galfit_imgs/%s/' %directory)
     
 def moffat_percentile(model, popt_moffat, percentile):
     
@@ -287,7 +287,7 @@ def image_profile(directory, galfit_model, psf, img_length, pixscale, spec_profi
    """
     
     # Read in galfit image
-    galfit_file = fits.open('/Users/chloecheng/Documents/LEGAC_resolved/galfit_imgs/%s/%s_galfit.fits' %(directory, galfit_model))
+    galfit_file = fits.open('/galfit_imgs/%s/%s_galfit.fits' %(directory, galfit_model))
     galfit_img = galfit_file[0].data
     galfit_file.close()
     
