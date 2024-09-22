@@ -20,7 +20,7 @@ plt.rc('font',**font)
 
 # Read in LEGA-C catalogue for image parameters
 my_cat = pd.read_csv('zuvj_LEGAC_cat.csv', header=0, index_col=0)
-LEGAC_cat_file = fits.open('/Users/chloecheng/Documents/LEGAC_resolved/legac_dr3_cat.fits')
+LEGAC_cat_file = fits.open('legac_dr3_cat.fits')
 LEGAC_cat_head = LEGAC_cat_file[1].header
 LEGAC_cat = LEGAC_cat_file[1].data
 LEGAC_cat_file.close()
@@ -57,11 +57,11 @@ def spectral_profile(target):
     
     #Import spectrum and weight map
     mask, obj = target.split('_')[0], target.split('_')[1]
-    spec2d_file = fits.open('/Users/chloecheng/Documents/LEGAC_resolved/2Dspectra/legac_' + mask + '_v3.11_spec2d_' + obj + '.fits')
+    spec2d_file = fits.open('/2Dspectra/legac_' + mask + '_v3.11_spec2d_' + obj + '.fits')
     flux2D = spec2d_file[0].data
     spec2d_file.close()
     
-    wht2d_file = fits.open('/Users/chloecheng/Documents/LEGAC_resolved/2Dspectra/legac_' + mask + '_v3.11_wht2d_' + obj + '.fits')
+    wht2d_file = fits.open('/2Dspectra/legac_' + mask + '_v3.11_wht2d_' + obj + '.fits')
     noise2D = wht2d_file[0].data
     wht2d_file.close()
     
@@ -146,7 +146,7 @@ def generate_psf(seeing, img_length, target):
     
     #Write to fits file
     hdu = fits.PrimaryHDU(psf)
-    hdu.writeto('/Users/chloecheng/packages/galfit/psfs/psf_%s_%s.fits' %(target, str(seeing)), overwrite=True)
+    hdu.writeto('/galfit/psfs/psf_%s_%s.fits' %(target, str(seeing)), overwrite=True)
     
     return psf
 
@@ -205,7 +205,7 @@ def galfit_input(targ, psf_targ, directory, img_box, img_ctr, seeing, pixscale, 
 
 	input_dict = dict(zip(keys, vals))
 	input_df = pd.Series(input_dict, index=input_dict.keys())
-	input_df.to_csv('/Users/chloecheng/packages/galfit/%s/%s.input' %(directory, input_name), sep='\t', header=None)
+	input_df.to_csv('/galfit/%s/%s.input' %(directory, input_name), sep='\t', header=None)
 	
 def galfit_model(directory, input_name):
     """Run galfit from OS and put the output files in a directory.
@@ -222,8 +222,8 @@ def galfit_model(directory, input_name):
     None
     """
     
-    os.system('/Users/chloecheng/packages/galfit/galfit /Users/chloecheng/packages/galfit/%s/%s.input >/dev/null 2>&1' %(directory, input_name))
-    os.system('mv /Users/chloecheng/Documents/LEGAC_resolved/*_galfit.fits /Users/chloecheng/Documents/LEGAC_resolved/galfit_imgs/%s/' %directory)
+    os.system('/galfit/galfit /galfit/%s/%s.input >/dev/null 2>&1' %(directory, input_name))
+    os.system('mv *_galfit.fits /galfit_imgs/%s/' %directory)
     
 def gaussian(x, amplitude, mean, stddev):
     """Return a Gaussian function.  To be used with curve_fit.
@@ -277,7 +277,7 @@ def image_profile(img_length, spec_arcsec, img_arcsec, pixscale, directory, galf
     # aperture_mask = aperture.to_mask()
     
     # Read in galfit image
-    galfit_file = fits.open('/Users/chloecheng/Documents/LEGAC_resolved/galfit_imgs/%s/%s_galfit.fits' %(directory, galfit_model))
+    galfit_file = fits.open('/galfit_imgs/%s/%s_galfit.fits' %(directory, galfit_model))
     galfit_img = galfit_file[0].data
     galfit_file.close()
     
@@ -546,7 +546,7 @@ def calculate_Re(target, psf_targ, best_seeing, directory, pixscale, output_name
     galfit_model(directory, input_name)
     
     # Read in this model
-    galfit_file = fits.open('/Users/chloecheng/Documents/LEGAC_resolved/galfit_imgs/%s/%s_galfit.fits' %(directory, output_name))
+    galfit_file = fits.open('/galfit_imgs/%s/%s_galfit.fits' %(directory, output_name))
     galfit_img = galfit_file[0].data
     galfit_file.close()
     
